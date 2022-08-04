@@ -5,7 +5,7 @@
 class Workout {
   date = new Date();
   id = (Date.now() + '').slice(-10);
-  clicks = 0;
+
   constructor(coords, distance, duration) {
     this.coords = coords;
     this.distance = distance;
@@ -19,10 +19,6 @@ class Workout {
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth()]
     } ${this.date.getDate()}`;
-  }
-
-  click() {
-    this.clicks++;
   }
 }
 
@@ -62,6 +58,7 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
+const resetButton = document.querySelector('.btn');
 
 // Application Arhitecture
 
@@ -71,12 +68,17 @@ class App {
   #workouts = [];
 
   constructor() {
+    //Get user Position
     this._getPosition();
 
-    form.addEventListener('submit', this._newWorkout.bind(this));
+    //Get data from local storage
+    this._getLocalStorage();
 
+    //Event Handlers
+    form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField.bind(this));
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
+    resetButton.addEventListener('click', this.reset.bind(this));
   }
 
   _getPosition() {
@@ -101,10 +103,9 @@ class App {
       attribution: '© OpenStreetMap',
     }).addTo(this.#map);
 
-    const marker = L.marker(coords).addTo(this.#map);
-    marker.bindPopup('<b>Hello world!</b><br>I am a popup.').openPopup();
-
     this.#map.on('click', this._showForm.bind(this));
+
+    this.#workouts.forEach(work => this._renderWorkoutMarker(work));
   }
 
   _showForm(mapE) {
@@ -183,8 +184,12 @@ class App {
 
     // Render workout on list
     this._renderWorkout(workout);
+
     // Hide the form and clear the input fields
     this._hideForm();
+
+    // Set local storage to all Workouts
+    this._setLocalStorage();
   }
   _renderWorkoutMarker(workout) {
     //Creating marker at click events on the Map
@@ -268,9 +273,25 @@ class App {
         duration: 1,
       },
     });
+  }
 
-    //using public interface
-    workout.click();
+  _setLocalStorage() {
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+  }
+
+  _getLocalStorage() {
+    const data = JSON.parse(localStorage.getItem('workouts'));
+
+    if (!data) return;
+
+    this.#workouts = data;
+
+    this.#workouts.forEach(work => this._renderWorkout(work));
+  }
+
+  reset() {
+    localStorage.removeItem('workouts');
+    location.reload();
   }
 }
 

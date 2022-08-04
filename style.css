@@ -40,6 +40,7 @@ a:visited {
   color: var(--color-brand--1);
 }
 
+
 /* SIDEBAR */
 .sidebar {
   flex-basis: 50rem;
@@ -47,6 +48,39 @@ a:visited {
   padding: 3rem 5rem 4rem 5rem;
   display: flex;
   flex-direction: column;
+}
+
+.container{
+  position:relative;
+}
+.btn {
+  padding: 10px 15px;
+  font-size: 20px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  background-color: #00c46a;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+  width:30%;
+  margin:0 auto;
+  position:absolute;
+  right:0;
+  top:0;
+}
+
+
+.btn:hover {
+  background-color: #0c814e
+  
+}
+
+.btn:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
 }
 
 .logo {
